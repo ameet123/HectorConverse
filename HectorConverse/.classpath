@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="lib" path="/home/ac2211/github/hector/core/target/hector-core-1.0-5-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="/home/ac2211/Cassandra/dsc123/lib/slf4j-api-1.7.2.jar"/>
+	<classpathentry kind="lib" path="/home/ac2211/Cassandra/dsc-cassandra-1.2.3/lib/libthrift-0.7.0.jar"/>
+	<classpathentry kind="lib" path="/home/ac2211/Cassandra/dsc-cassandra-1.2.3/lib/apache-cassandra-thrift-1.2.3.jar"/>
+	<classpathentry kind="lib" path="/home/ac2211/Cassandra/dsc-cassandra-1.2.3/lib/guava-13.0.1.jar"/>
+	<classpathentry kind="lib" path="/home/ac2211/Cassandra/dsc-cassandra-1.2.3/lib/slf4j-log4j12-1.7.2.jar"/>
+	<classpathentry kind="lib" path="/home/ac2211/Cassandra/dsc-cassandra-1.2.3/lib/commons-lang-2.6.jar"/>
+	<classpathentry kind="lib" path="/home/ac2211/Cassandra/dsc-cassandra-1.2.3/lib/log4j-1.2.16.jar"/>
+	<classpathentry kind="lib" path="/home/ac2211/software/uuid-3.4.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
