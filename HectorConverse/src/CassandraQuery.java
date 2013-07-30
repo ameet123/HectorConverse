@@ -16,7 +16,7 @@ public class CassandraQuery {
 	private Keyspace tutorialKeyspace;
 	private ConfigurableConsistencyLevel READ_CONSISTENCY;
 	private List<String> serialList = new ArrayList<String>();
-	private String columnFamily;
+//	private String columnFamily;
 	private List<Object> componentElementList = new ArrayList<Object>();
 
 	/**
@@ -35,7 +35,7 @@ public class CassandraQuery {
 		READ_CONSISTENCY.setDefaultReadConsistencyLevel(HConsistencyLevel.ONE);
 	}
 	public void setColumnFamily(String CF){
-		this.columnFamily = CF;
+//		this.columnFamily = CF;
 		setSerializerList();
 	}
 	
@@ -46,10 +46,10 @@ public class CassandraQuery {
 		serialList.add("me.prettyprint.cassandra.serializers.DoubleSerializer");
 	}
 	
-	public void doIteratorQuery(Composite startCol, Composite endCol, String key){
-		CompositeSliceQueryIterator iter = new CompositeSliceQueryIterator(tutorialKeyspace, columnFamily, key, startCol, endCol);
-		
-	}
+//	public void doIteratorQuery(Composite startCol, Composite endCol, String key){
+//		CompositeSliceQueryIterator iter = new CompositeSliceQueryIterator(tutorialKeyspace, columnFamily, key, startCol, endCol);
+//		
+//	}
 	/** 
 	 * get a query iterator and iterate through the columns returned and print 
 	 * desired components of the composite column 
@@ -71,6 +71,7 @@ public class CassandraQuery {
 	    System.out.printf("Found %d columns\n",count);
 	}
 	
+	@SuppressWarnings("unused")
 	private List<Object> buildCompositeColumnElementList(HColumn<Composite,?> column){
 		// get the composite column
 		Composite columnName = column.getName();
