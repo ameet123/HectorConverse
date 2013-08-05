@@ -35,7 +35,7 @@ public class Utility {
 	 * @param startKey
 	 * @param endKey
 	 * @param limit
-	 * @return
+	 * @return Rows<?,?,?>
 	 */
 	public static Rows<?,?,?> getCompositeRangeRowIterator(Keyspace ks, String columnFamily, String startKey, String endKey, 
 																Composite startCol, Composite endCol, int limit)   {		        
