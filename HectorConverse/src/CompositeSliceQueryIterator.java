@@ -19,6 +19,7 @@ public class CompositeSliceQueryIterator implements Iterable<HColumn<Composite,S
     private final ColumnSliceIterator<String,Composite,String> sliceIterator;
     /**
      * constructor based on a key and start/end objects
+     * uses SliceQuery
      * @param CF	Column Family
      * @param key
      * @param start
@@ -32,8 +33,16 @@ public class CompositeSliceQueryIterator implements Iterable<HColumn<Composite,S
     	sliceQuery.setKey(key);
     	sliceIterator = new ColumnSliceIterator<String, Composite, String>(sliceQuery, start, end, false);
     }
-    public CompositeSliceQueryIterator(Keyspace ks, String CF, String key, Composite start, Composite end, int limit) {
-    	
+    /**
+     * constructor that accepts a limit on # of columns returned per batch
+     * @param ks
+     * @param CF
+     * @param key
+     * @param start
+     * @param end
+     * @param limit this is per batch limit, NOT a limit on TOTAL columns retrieved
+     */
+    public CompositeSliceQueryIterator(Keyspace ks, String CF, String key, Composite start, Composite end, int limit) {  	
     	SliceQuery<String, Composite, String> sliceQuery =
     			HFactory.createSliceQuery(ks, StringSerializer.get(), new CompositeSerializer(), StringSerializer.get());
     	sliceQuery.setColumnFamily(CF);
