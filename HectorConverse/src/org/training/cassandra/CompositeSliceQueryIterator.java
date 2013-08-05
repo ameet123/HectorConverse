@@ -1,3 +1,4 @@
+package org.training.cassandra;
 import java.util.Iterator;
 import me.prettyprint.cassandra.serializers.CompositeSerializer;
 import me.prettyprint.cassandra.serializers.StringSerializer;

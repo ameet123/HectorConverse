@@ -1,3 +1,4 @@
+package org.training.cassandra;
 import java.util.Iterator;
 
 import me.prettyprint.hector.api.beans.Composite;

@@ -1,3 +1,5 @@
+package org.training.cassandra;
+
 import java.util.ArrayList;
 import java.util.List;
 
