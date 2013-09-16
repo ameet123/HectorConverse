@@ -83,6 +83,7 @@ public class Utility {
 		return composite;
 		
 	}
+
 	/**
 	 * create a composite column name based on a TimeUUID type as its first element
 	 * The TimeUUID element is generated based on a date string passed
@@ -112,6 +113,8 @@ public class Utility {
 		composite.addComponent(0, u1,  equalityOp);		
 		return composite;
 	}
+	
+	
 	public static java.util.UUID getUniqueTimeUUIDinMillis(long time) {
 	    return new java.util.UUID(time, UUIDGen.getClockSeqAndNode());
 	}

@@ -2,10 +2,8 @@ package org.training.cassandra;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
 import java.util.UUID;
 
 import me.prettyprint.cassandra.model.ConfigurableConsistencyLevel;
@@ -27,23 +25,6 @@ import me.prettyprint.hector.api.query.QueryResult;
 public class CassandraQueriesViaHector {
 	protected static Cluster tutorialCluster;
     protected static Keyspace tutorialKeyspace;
-    String myKey = "elizabeth:lydia";
-    String columnFamily = "chat_conversation_comp";
-    Composite startCol;
-    Composite endCol;
-    /**
-     * a List of serializers for the chat conversation table.
-     * The table has one type of dynamic column which is a composite
-     * the elements of composite are: TimeUUID:Talker
-     * This list just lists them so we can get them conveniently
-     */
-    List<String> serialList = new ArrayList<String>() {
-		private static final long serialVersionUID = -1607044520560409145L;
-	{
-		add("me.prettyprint.cassandra.serializers.UUIDSerializer");
-		add("me.prettyprint.cassandra.serializers.StringSerializer");
-	}};
-
 	/**
 	 * @param args
 	 */
@@ -52,7 +33,7 @@ public class CassandraQueriesViaHector {
 		/**
 		 * get a cluster handle by specifying the IP:Port and a name, which can be anything
 		 */
-		tutorialCluster = HFactory.getOrCreateCluster("artCluster","localhost:9160");
+		tutorialCluster = HFactory.getOrCreateCluster(Constants.CLUSTERNAME,Constants.CLUSTERID);
 		/**
 		 * define a consistency level for cassandra transactions
 		 */
@@ -61,37 +42,33 @@ public class CassandraQueriesViaHector {
         /**
          * get a keyspace object based on the name of the keyspace
          */
-        tutorialKeyspace = HFactory.createKeyspace("training_ks", tutorialCluster, ccl);
-        // composite query     
-            
-        ts.startCol = Utility.UUIDfromDateString("2013-07-30 20:09:30", Composite.ComponentEquality.EQUAL);
-        ts.endCol = Utility.UUIDfromDateString("2013-07-30 20:09:40", Composite.ComponentEquality.EQUAL);           
+        tutorialKeyspace = HFactory.createKeyspace(Constants.KEYSPACE, tutorialCluster, ccl);       
         
         /**
          * 1. how to get all keys, probably expensive on large # of keys, so need to be careful
          */
-//        ts.getAllKeys();
+//        ts.getAllKeys(Constants.DATA_CF);
         /**
          * 2. a top-n type of query, since the data is already ordered
          */
-//        ts.topnQuery(3, "elizabeth:lydia");
+        ts.topnQuery(3, Constants.MYKEY);
         /**
-//         * 3. range query which allows for a limit on columns returned and range of predicate values
+         * 3. range query which allows for a limit on columns returned and range of predicate values
          */
-        ts.rangeQueryWithLimits(5, "2013-07-30 20:09:30", "2013-07-30 20:09:40", Composite.ComponentEquality.LESS_THAN_EQUAL);
+        ts.rangeQueryWithLimits(1, "2013-09-08 17:00:00", "2013-09-08 20:09:40", Composite.ComponentEquality.LESS_THAN_EQUAL);
         /**
          * 4. Slice Query with an iterator,range bounded by start->end
          */
-        ts.getColumnSliceForKey(ts.columnFamily, ts.startCol,ts.endCol, ts.myKey);     
+        ts.getColumnSliceForKey(Constants.DATA_CF, Constants.startCol, Constants.endCol, Constants.MYKEY);     
 	}
 	/**
 	 * iterate using a RangeSliceQuery and get all keys.
 	 * The important point here is that we don't really want to iterate over tens/hundreds/thousands or whatever # of columns
 	 * that each key may have, since we only want row keys and not columns
 	 */
-	public void getAllKeys(){
+	public void getAllKeys(String CF){
 		int rowCnt = 0;
-		for ( Row<?, ?, ?> r: Utility.getCompositeRangeRowIterator(tutorialKeyspace, columnFamily, null, null, null, null, 2)){
+		for ( Row<?, ?, ?> r: Utility.getCompositeRangeRowIterator(tutorialKeyspace, CF, null, null, null, null, 2)){
 			System.out.println("Rowkey:"+ r.getKey());
 			rowCnt++;
 		}
@@ -107,7 +84,7 @@ public class CassandraQueriesViaHector {
 	 * @param key
 	 */
 	public void topnQuery(int limit, String key) {
-		QueryResult<ColumnSlice<Composite, String>> qr = Utility.getLimitSliceQuery(tutorialKeyspace, columnFamily, key, null, null, limit);
+		QueryResult<ColumnSlice<Composite, String>> qr = Utility.getLimitSliceQuery(tutorialKeyspace, Constants.DATA_CF, key, null, null, limit);
 		/**
 		 * we need the iter.hasNext() because without it the iteration is not kick-started
 		 */
@@ -137,11 +114,11 @@ public class CassandraQueriesViaHector {
 		CompositeSliceQueryIterator iter = new CompositeSliceQueryIterator(tutorialKeyspace, CF, key, start, end);
 	    int count = 0;
 	    for ( HColumn<Composite, String> column : iter ) {
-	    	UUID u = (UUID) column.getName().get(0,Utility.getSerializer(0,serialList));
+	    	UUID u = (UUID) column.getName().get(0,Utility.getSerializer(0,Constants.SERIALIZER_LIST));
 	    	long time = TimeUUIDUtils.getTimeFromUUID(u);
 	    	System.out.printf("Messagetime: %s  Talker:%s  Message= %s \n", 
 		        new Date(time),
-		        column.getName().get(1,Utility.getSerializer(1,serialList)),
+		        column.getName().get(1,Utility.getSerializer(1,Constants.SERIALIZER_LIST)),
 		        column.getValue()
 	        );
 	    	count++;
@@ -150,7 +127,7 @@ public class CassandraQueriesViaHector {
 	}
 
 	/**
-	 * uses rangeslice query for multiple keys and get any columns with a # element
+	 * uses range slice query for multiple keys and get any columns with a # element
 	 * Start Equality is always EQUAL
 	 * @param limit
 	 * @param startTime
@@ -158,24 +135,24 @@ public class CassandraQueriesViaHector {
 	 * @param endEquality
 	 */
 	public void rangeQueryWithLimits(int limit, String startTime, String endTime, ComponentEquality endEquality) {
-		Composite startCol = Utility.UUIDfromDateString("2013-07-30 20:09:30", Composite.ComponentEquality.EQUAL);
-		Composite endCol = Utility.UUIDfromDateString("2013-07-30 20:09:40", endEquality);
+		Composite startCol = Utility.UUIDfromDateString(startTime, Composite.ComponentEquality.EQUAL);
+		Composite endCol = Utility.UUIDfromDateString(endTime, endEquality);
 		int cnt = 0;
 		int colCount = 0;
-		for ( Row<?, ?, ?> r: Utility.getCompositeRangeRowIterator(tutorialKeyspace, columnFamily, this.myKey, this.myKey, startCol, endCol, limit)){
+		for ( Row<?, ?, ?> r: Utility.getCompositeRangeRowIterator(tutorialKeyspace, Constants.DATA_CF, Constants.MYKEY, Constants.MYKEY, startCol, endCol, limit)){
 			System.out.println("Rowkey:"+ r.getKey());
 			colCount = 0;
 			// get column iterator
 			CompositeColumnSliceIterator colIterator = new CompositeColumnSliceIterator(r);
 			for ( HColumn<Composite,String> column : colIterator) {		
-				UUID timeUuid =   (UUID) column.getName().get(0,Utility.getSerializer(0,serialList)) ;
+				UUID timeUuid =   (UUID) column.getName().get(0,Utility.getSerializer(0,Constants.SERIALIZER_LIST)) ;
 				long time = TimeUUIDUtils.getTimeFromUUID(timeUuid);
 				Date d = new Date(time);
 				DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 				String dString = formatter.format(d);
 			    System.out.printf("Messagetime: %s  Talker:%s  Message= %s\n", 
 				        dString,			  
-				        column.getName().get(1,Utility.getSerializer(1,serialList)),
+				        column.getName().get(1,Utility.getSerializer(1,Constants.SERIALIZER_LIST)),
 				        column.getValue()
 			    );
 			    colCount++;
