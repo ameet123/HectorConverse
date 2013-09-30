@@ -47,7 +47,7 @@ public class CassandraQueriesViaHector {
         /**
          * 1. how to get all keys, probably expensive on large # of keys, so need to be careful
          */
-//        ts.getAllKeys(Constants.DATA_CF);
+        ts.getAllKeys(Constants.DATA_CF);
         /**
          * 2. a top-n type of query, since the data is already ordered
          */
@@ -55,7 +55,7 @@ public class CassandraQueriesViaHector {
         /**
          * 3. range query which allows for a limit on columns returned and range of predicate values
          */
-        ts.rangeQueryWithLimits(1, "2013-09-08 17:00:00", "2013-09-08 20:09:40", Composite.ComponentEquality.LESS_THAN_EQUAL);
+        ts.rangeQueryWithLimits(20, "2013-09-08 17:00:45", "2013-09-08 17:30:55", Composite.ComponentEquality.LESS_THAN_EQUAL);
         /**
          * 4. Slice Query with an iterator,range bounded by start->end
          */
@@ -137,6 +137,7 @@ public class CassandraQueriesViaHector {
 	public void rangeQueryWithLimits(int limit, String startTime, String endTime, ComponentEquality endEquality) {
 		Composite startCol = Utility.UUIDfromDateString(startTime, Composite.ComponentEquality.EQUAL);
 		Composite endCol = Utility.UUIDfromDateString(endTime, endEquality);
+
 		int cnt = 0;
 		int colCount = 0;
 		for ( Row<?, ?, ?> r: Utility.getCompositeRangeRowIterator(tutorialKeyspace, Constants.DATA_CF, Constants.MYKEY, Constants.MYKEY, startCol, endCol, limit)){

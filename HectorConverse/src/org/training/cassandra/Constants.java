@@ -24,7 +24,7 @@ public class Constants {
 	public static String CLUSTERID = "localhost:9160";
 	public static String KEYSPACE = "training_ks";
 	public static String start = "2013-09-08 17:00:00";
-	public static String end = "2013-09-08 20:09:40";
+	public static String end = "2013-09-08 17:09:40";
 	
 	public static Composite startCol = Utility.UUIDfromDateString(start, Composite.ComponentEquality.EQUAL);
 	public static Composite endCol = Utility.UUIDfromDateString(end, Composite.ComponentEquality.GREATER_THAN_EQUAL);

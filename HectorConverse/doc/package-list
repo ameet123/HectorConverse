@@ -1,1 +1,6 @@
-org.training.cassandra
+com.urjanet.Query
+com.urjanet.db.prereq
+com.urjanet.db.utility
+com.urjanet.extraction
+com.urjanet.iterators
+com.urjanet.orchestrate
